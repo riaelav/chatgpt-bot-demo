@@ -1,49 +1,67 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
+
 const app = express();
 
+// Middleware per interpretare correttamente il body della richiesta di Twilio
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json()); // Aggiunto per sicurezza
 
+// Usa il fetch nativo di Node (v18+)
 const fetch = global.fetch;
 
+// Rotta principale che riceve i messaggi da WhatsApp/Twilio
 app.post("/whatsapp", async (req, res) => {
+  console.log("🎯 ENTRATO NELLA ROTTA /whatsapp");
+
+  // Verifica che Twilio stia mandando qualcosa
+  console.log("📨 Body ricevuto:", req.body);
+
   const userMessage = req.body.Body;
   const sender = req.body.From;
 
   console.log(`📩 Messaggio da ${sender}: ${userMessage}`);
 
-  const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "Rispondi come se fossi un camperizzatore di van professionista. Sii gentile e informativo",
-        },
-        {
-          role: "user",
-          content: userMessage,
-        },
-      ],
-    }),
-  });
+  try {
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "Rispondi come se fossi un camperizzatore di van professionista. Sii gentile e informativo.",
+          },
+          {
+            role: "user",
+            content: userMessage,
+          },
+        ],
+      }),
+    });
 
-  const data = await openaiRes.json();
-  const reply = data?.choices?.[0]?.message?.content || "Errore nella risposta.";
+    const data = await openaiRes.json();
+    console.log("🤖 Risposta da OpenAI:", JSON.stringify(data, null, 2));
 
-  res.set("Content-Type", "text/xml");
-  res.send(`
-    <Response>
-      <Message>${reply}</Message>
-    </Response>
-  `);
+    const reply = data?.choices?.[0]?.message?.content || "Non sono riuscito a generare una risposta.";
+
+    res.set("Content-Type", "text/xml");
+    res.send(`<Response><Message>${reply}</Message></Response>`);
+  } catch (error) {
+    console.error("❌ Errore nella richiesta a OpenAI:", error);
+
+    res.set("Content-Type", "text/xml");
+    res.send(`<Response><Message>Si è verificato un errore interno. Riprova più tardi.</Message></Response>`);
+  }
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`🚀 Server avviato su http://localhost:${PORT}/whatsapp`));
+// Porta d'ascolto per Render
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server avviato su http://localhost:${PORT}/whatsapp`);
+});
