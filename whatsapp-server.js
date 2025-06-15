@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
+const fs = require("fs"); // 👈 Per leggere il file transcript.txt
 
 const app = express();
 
@@ -10,6 +11,9 @@ app.use(bodyParser.json()); // Aggiunto per sicurezza
 
 // Usa il fetch nativo di Node (v18+)
 const fetch = global.fetch;
+
+// 🔹 Leggi il contenuto del file transcript una sola volta all'avvio
+const transcript = fs.readFileSync("./transcript.txt", "utf-8");
 
 // Rotta principale che riceve i messaggi da WhatsApp/Twilio
 app.post("/whatsapp", async (req, res) => {
@@ -35,7 +39,7 @@ app.post("/whatsapp", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: "Rispondi come se fossi un camperizzatore di van professionista. Sii gentile e informativo.",
+            content: `Usa solo queste informazioni per rispondere come un camperizzatore esperto:\n\n${transcript}\n\nSe non sai la risposta, dì che non puoi aiutare.`,
           },
           {
             role: "user",
