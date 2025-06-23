@@ -39,7 +39,7 @@ app.post("/whatsapp", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: ` Usa solo queste informazioni per rispondere come un camperizzatore esperto:\n\n${transcript}\n\nSe non sai la risposta, dì che non puoi aiutare.`,
+            content: ` Usa queste informazioni per rispondere come un camperizzatore esperto:\n\n${transcript}\n\nSe non sai la risposta, dì che non puoi aiutare.`,
           },
           {
             role: "user",
