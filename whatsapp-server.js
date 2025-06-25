@@ -54,6 +54,19 @@ app.post("/whatsapp", async (req, res) => {
 
     const reply = data?.choices?.[0]?.message?.content || "Non sono riuscito a generare una risposta.";
 
+    if (
+      reply.toLowerCase().includes("posso farti contattare") ||
+      userMessage.toLowerCase().includes("preventivo") ||
+      userMessage.toLowerCase().includes("noleggio") ||
+      userMessage.toLowerCase().includes("acquistare") ||
+      reply.toLowerCase().includes("ti facciamo contattare")
+    ) {
+      console.log("🔎 Lead potenziale rilevato!");
+      console.log("➡️ Utente:", sender);
+      console.log("💬 Domanda:", userMessage);
+      console.log("🤖 Risposta:", reply);
+    }
+
     res.set("Content-Type", "text/xml");
     res.send(`<Response><Message>${reply}</Message></Response>`);
   } catch (error) {
