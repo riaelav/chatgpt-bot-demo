@@ -39,7 +39,7 @@ app.post("/whatsapp", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: ` Usa queste informazioni per rispondere come un camperizzatore esperto:\n\n${transcript}\n\nSe non sai la risposta, dì che non puoi aiutare.`,
+            content: `Agisci come assistente vendite. Il tuo obiettivo è rispondere in modo gentile ma strategico, porre domande per qualificare il cliente e raccogliere informazioni utili alla vendita. Usa queste informazioni per rispondere come un camperizzatore esperto:\n\n${transcript}\n\nSe non sai la risposta, dì che non puoi aiutare.`,
           },
           {
             role: "user",
