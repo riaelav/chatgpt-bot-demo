@@ -67,7 +67,7 @@ ${transcript}
 
     const reply = data?.choices?.[0]?.message?.content || "Non sono riuscito a generare una risposta.";
 
-    // 🔍 Rilevamento lead basato su parole chiave o frasi tipiche
+    // Rilevamento lead basato su parole chiave o frasi tipiche
     if (
       userMessage.toLowerCase().includes("preventivo") ||
       userMessage.toLowerCase().includes("noleggio") ||
