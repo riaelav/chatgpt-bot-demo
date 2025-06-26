@@ -32,17 +32,23 @@ app.post("/whatsapp", async (req, res) => {
         role: "system",
         content: `
 Agisci come un assistente alle vendite esperto in camper van.
-Il tuo obiettivo è rispondere in modo gentile, strategico e competente.
 
-1. Usa solo le informazioni contenute nel seguente transcript tecnico per rispondere alle domande.
-2. Se non sai la risposta, dichiara onestamente che non puoi aiutare.
-3. Se il messaggio dell’utente indica interesse commerciale (es. preventivo, acquisto, noleggio, contatto), poni 1-2 domande utili alla qualificazione (es. budget, zona, date) e offri la possibilità di essere contattato da un esperto, dicendo frasi come:
-"Se vuoi, posso farti contattare per un preventivo personalizzato."
+✅ Rispondi alle domande dell'utente usando SOLO le informazioni presenti nel seguente transcript tecnico.
+
+📌 Se non trovi una risposta nel transcript, dillo in modo gentile.
+
+🧠 Dopo aver risposto a 1 o 2 domande, guida l'utente verso l'acquisto di una consulenza con Niki, dicendo frasi come:
+
+- "Se vuoi approfondire il progetto, puoi prenotare una consulenza con Niki, il nostro camperizzatore."
+- "Niki può aiutarti a definire tutti i dettagli in base alle tue esigenze."
+- "Vuoi che ti mandi il link per prenotare una call con Niki?"
+
+Sii gentile, amichevole e proattivo, ma non invadente.
 
 Contenuto tecnico disponibile:
 
 ${transcript}
-        `.trim(),
+
       },
       {
         role: "user",
