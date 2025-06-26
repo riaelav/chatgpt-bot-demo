@@ -5,17 +5,12 @@ const fs = require("fs");
 
 const app = express();
 
-// Middleware per interpretare correttamente il body delle richieste da Twilio
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Usa il fetch nativo di Node.js (v18+)
 const fetch = global.fetch;
-
-// 🔹 Legge il contenuto del transcript una sola volta all'avvio
 const transcript = fs.readFileSync("./transcript.txt", "utf-8").trim();
 
-// Rotta principale che riceve i messaggi da WhatsApp via Twilio
 app.post("/whatsapp", async (req, res) => {
   console.log("🎯 ENTRATO NELLA ROTTA /whatsapp");
   console.log("📨 Body ricevuto:", req.body);
@@ -26,7 +21,6 @@ app.post("/whatsapp", async (req, res) => {
   console.log(`📩 Messaggio da ${sender}: ${userMessage}`);
 
   try {
-    // Prompt ottimizzato per vendite + risposte tecniche
     const messages = [
       {
         role: "system",
@@ -48,7 +42,7 @@ Sii gentile, amichevole e proattivo, ma non invadente.
 Contenuto tecnico disponibile:
 
 ${transcript}
-
+        `.trim(),
       },
       {
         role: "user",
@@ -64,7 +58,7 @@ ${transcript}
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: messages,
+        messages,
       }),
     });
 
@@ -73,7 +67,6 @@ ${transcript}
 
     const reply = data?.choices?.[0]?.message?.content || "Non sono riuscito a generare una risposta.";
 
-    // Rilevamento lead basato su parole chiave o frasi tipiche
     if (
       userMessage.toLowerCase().includes("preventivo") ||
       userMessage.toLowerCase().includes("noleggio") ||
@@ -87,7 +80,6 @@ ${transcript}
       console.log("🤖 Risposta:", reply);
     }
 
-    // Risposta per Twilio/WhatsApp
     res.set("Content-Type", "text/xml");
     res.send(`<Response><Message>${reply}</Message></Response>`);
   } catch (error) {
@@ -98,7 +90,6 @@ ${transcript}
   }
 });
 
-// Porta d'ascolto per Render (usa PORT se definito)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server avviato su http://localhost:${PORT}/whatsapp`);
