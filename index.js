@@ -1,7 +1,7 @@
 require("dotenv").config();
 const fs = require("fs");
 
-// Usa il fetch nativo di Node.js v18+ (quindi niente node-fetch)
+// Usa il fetch nativo di Node.js v18
 const fetch = global.fetch;
 
 // Leggi il contenuto del transcript
@@ -16,11 +16,11 @@ async function askChatGPT(userInput) {
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo", // o "gpt-4o" se disponibile nel tuo account
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: "Rispondi solo usando queste informazioni:\n\n" + transcript,
+          content: "Rispondi usando queste informazioni:\n\n" + transcript,
         },
         {
           role: "user",
@@ -33,7 +33,7 @@ async function askChatGPT(userInput) {
   const data = await res.json();
 
   // Mostra l'intera risposta per debug
-  console.log("\n📦 Risposta grezza dell'API:\n", JSON.stringify(data, null, 2));
+  console.log("\n Risposta grezza dell'API:\n", JSON.stringify(data, null, 2));
 
   // Se c'è un errore, lo stampiamo
   if (!res.ok || !data.choices) {
@@ -42,8 +42,5 @@ async function askChatGPT(userInput) {
   }
 
   // Risposta dell'assistente
-  console.log("\n🤖 ChatGPT risponde:\n", data.choices[0].message.content);
+  console.log("\nChatGPT risponde:\n", data.choices[0].message.content);
 }
-
-// ESEMPIO: puoi modificare questa domanda per testare
-askChatGPT("Qual'è la marca del van?");
