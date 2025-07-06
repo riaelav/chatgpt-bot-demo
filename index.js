@@ -20,7 +20,7 @@ async function askChatGPT(userInput) {
       messages: [
         {
           role: "system",
-          content: "Rispondi usando solo queste informazioni:\n\n" + transcript,
+          content: "Rispondi usando queste informazioni:\n\n" + transcript,
         },
         {
           role: "user",
